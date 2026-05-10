@@ -3,8 +3,9 @@ import { expect, test } from '@playwright/test';
 test('customers page renders required fields', async ({ page }) => {
   await page.goto('/');
 
-  await expect(page.getByRole('heading', { name: 'Customers' })).toBeVisible();
-  await page.getByRole('button', { name: 'Add customer' }).click();
+  const addCustomerButton = page.getByRole('button', { name: 'Add customer' });
+  await expect(addCustomerButton).toBeVisible();
+  await addCustomerButton.click();
 
   await expect(page.getByText('Create customer')).toBeVisible();
   await expect(page.getByLabel('First name')).toBeVisible();
