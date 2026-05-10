@@ -1,0 +1,133 @@
+<section class="customers-page">
+  <p-card header="Customers">
+    <div class="toolbar">
+      <p-button
+        label="Add customer"
+        icon="pi pi-plus"
+        (onClick)="openCreateDialog()"
+      />
+    </div>
+
+    @if (error$ | async; as error) {
+      <p-tag severity="danger" [value]="error" />
+    }
+
+    @if (loading$ | async) {
+      <div class="loader-wrapper">
+        <p-progressSpinner ariaLabel="Loading customers" />
+      </div>
+    } @else {
+      <p-table
+        [value]="(customers$ | async) ?? []"
+        dataKey="id"
+        [paginator]="true"
+        [rows]="8"
+        responsiveLayout="scroll"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>First name</th>
+            <th>Surname</th>
+            <th>Date of birth</th>
+            <th>Address</th>
+            <th>Phone</th>
+            <th>IBAN</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-customer>
+          <tr>
+            <td>{{ customer.firstName }}</td>
+            <td>{{ customer.surname }}</td>
+            <td>{{ customer.dateOfBirth }}</td>
+            <td>{{ customer.address }}</td>
+            <td>{{ customer.phoneNumber }}</td>
+            <td>{{ customer.iban }}</td>
+            <td class="actions">
+              <p-button
+                label="Edit contact"
+                size="small"
+                severity="secondary"
+                (onClick)="openEditDialog(customer)"
+              />
+              <p-button
+                label="Delete"
+                size="small"
+                severity="danger"
+                (onClick)="deleteCustomer(customer.id)"
+              />
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
+  </p-card>
+
+  <p-dialog
+    [modal]="true"
+    [draggable]="false"
+    [visible]="createDialogVisible()"
+    [closable]="true"
+    header="Create customer"
+    (visibleChange)="createDialogVisible.set($event)"
+  >
+    <form [formGroup]="createForm" (ngSubmit)="submitCreate()" class="dialog-form">
+      <label>
+        First name
+        <input pInputText formControlName="firstName" />
+      </label>
+      <label>
+        Surname
+        <input pInputText formControlName="surname" />
+      </label>
+      <label>
+        D.O.B
+        <input pInputText type="date" formControlName="dateOfBirth" />
+      </label>
+      <label>
+        Address
+        <input pInputText formControlName="address" />
+      </label>
+      <label>
+        Phone number
+        <input pInputText formControlName="phoneNumber" />
+      </label>
+      <label>
+        IBAN
+        <input pInputText formControlName="iban" />
+      </label>
+      <div class="dialog-actions">
+        <p-button type="button" label="Cancel" severity="secondary" (onClick)="closeDialogs()" />
+        <p-button type="submit" label="Save" />
+      </div>
+    </form>
+  </p-dialog>
+
+  <p-dialog
+    [modal]="true"
+    [draggable]="false"
+    [visible]="editDialogVisible()"
+    [closable]="true"
+    header="Update contact"
+    (visibleChange)="editDialogVisible.set($event)"
+  >
+    <form [formGroup]="contactForm" (ngSubmit)="submitContactUpdate()" class="dialog-form">
+      <label>
+        Address
+        <input pInputText formControlName="address" />
+      </label>
+      <label>
+        Phone number
+        <input pInputText formControlName="phoneNumber" />
+      </label>
+      <label>
+        IBAN
+        <input pInputText formControlName="iban" />
+      </label>
+      <div class="dialog-actions">
+        <p-button type="button" label="Cancel" severity="secondary" (onClick)="closeDialogs()" />
+        <p-button type="submit" label="Update" />
+      </div>
+    </form>
+  </p-dialog>
+</section>
